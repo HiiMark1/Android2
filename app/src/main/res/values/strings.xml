@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Android_2_sem</string>
+    <string name="wind_direct">Юго-Вост.</string>
+    <string name="wind_direct_name">Направление ветра</string>
+    <string name="temp">29</string>
+    <string name="feels_like">Ощущается как</string>
+    <string name="fourzerozerozero">4000</string>
+    <string name="hum">Влажность</string>
+    <string name="temp_true">+30</string>
+    <string name="moscow">MoscowNeverSleep</string>
 </resources>
