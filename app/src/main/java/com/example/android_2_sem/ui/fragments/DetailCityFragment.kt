@@ -1,36 +1,36 @@
-package com.example.android_2_sem.fragments
+package com.example.android_2_sem.ui.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.android_2_sem.R
-import com.example.android_2_sem.data.WeatherRepository
+import com.example.android_2_sem.data.WeatherRepositoryImpl
+import com.example.android_2_sem.data.mappers.WeatherMapper
 import com.example.android_2_sem.databinding.FragmentDetailCityBinding
+import com.example.android_2_sem.di.DIContainer
+import com.example.android_2_sem.domain.usecases.GetWeatherByIdUseCase
 import kotlinx.coroutines.launch
 
 class DetailCityFragment: Fragment(R.layout.fragment_detail_city) {
     private lateinit var binding: FragmentDetailCityBinding
-
-    private val repository by lazy {
-        WeatherRepository()
-    }
+    private lateinit var getWeatherByIdUseCase: GetWeatherByIdUseCase
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initObjects()
         binding = FragmentDetailCityBinding.bind(view)
 
         lifecycleScope.launch {
             val id = arguments?.getInt("id").toString()
 
             with(binding) {
-                val weatherResponse = repository.getWeatherById(id)
-                val temp = weatherResponse.main.temp.toString() + "°C"
+                val cityWeather = getWeatherByIdUseCase(id)
+                val temp = cityWeather.temp + "°C"
                 tvTemperature.text = temp
-                tvFeeling.text = weatherResponse.main.feels_like.toString()
-                tvHumidity1.text = weatherResponse.main.humidity.toString()
-                when(weatherResponse.wind.deg){
+                tvFeeling.text = cityWeather.feels_like
+                tvHumidity1.text = cityWeather.humidity.toString()
+                when(cityWeather.windDirection){
                     in 0..25 -> tvWindDirection.text = "С"
                     in 25..70 -> tvWindDirection.text = "СВ"
                     in 70..115 -> tvWindDirection.text = "В"
@@ -43,5 +43,14 @@ class DetailCityFragment: Fragment(R.layout.fragment_detail_city) {
                 }
             }
         }
+    }
+
+    private fun initObjects(){
+        getWeatherByIdUseCase= GetWeatherByIdUseCase(
+            weatherRepository = WeatherRepositoryImpl(
+                api= DIContainer.api,
+                mapper = WeatherMapper()
+            )
+        )
     }
 }

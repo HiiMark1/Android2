@@ -1,4 +1,4 @@
-package com.example.android_2_sem.fragments
+package com.example.android_2_sem.ui.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -12,9 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.android_2_sem.R
 import com.example.android_2_sem.adapters.CityListAdapter
-import com.example.android_2_sem.data.WeatherRepository
+import com.example.android_2_sem.data.WeatherRepositoryImpl
+import com.example.android_2_sem.data.mappers.WeatherMapper
 import com.example.android_2_sem.data.response.cities_list_response.City
 import com.example.android_2_sem.databinding.FragmentFindCitiesBinding
+import com.example.android_2_sem.di.DIContainer
+import com.example.android_2_sem.domain.usecases.GetCitiesListUseCase
+import com.example.android_2_sem.domain.usecases.GetWeatherByNameUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
@@ -27,10 +31,8 @@ class FindCitiesFragment : Fragment(R.layout.fragment_find_cities) {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lat = "51.509865"
     private var lon = "-0.118092"
-
-    private val repository by lazy {
-        WeatherRepository()
-    }
+    private lateinit var getCitiesListUseCase: GetCitiesListUseCase
+    private lateinit var getWeatherByNameUseCase: GetWeatherByNameUseCase
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -48,6 +50,7 @@ class FindCitiesFragment : Fragment(R.layout.fragment_find_cities) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObjects()
         binding = FragmentFindCitiesBinding.bind(view)
 
         lifecycleScope.launch {
@@ -55,7 +58,7 @@ class FindCitiesFragment : Fragment(R.layout.fragment_find_cities) {
 
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-            val cities = repository.getCities(lat, lon).list as MutableList<City>
+            val cities = getCitiesListUseCase(lat, lon).list as MutableList<City>
 
             cityListAdapter = CityListAdapter {
                 lifecycleScope.launch {
@@ -88,7 +91,7 @@ class FindCitiesFragment : Fragment(R.layout.fragment_find_cities) {
                     lifecycleScope.launch {
                         try {
                             val bundle = Bundle()
-                            val id = repository.getWeatherByName(query).id
+                            val id = getWeatherByNameUseCase(query).id
                             bundle.putInt("id", id)
                             val detailWeatherFragment = DetailCityFragment()
                             detailWeatherFragment.arguments = bundle
@@ -108,6 +111,21 @@ class FindCitiesFragment : Fragment(R.layout.fragment_find_cities) {
                 }
             })
         }
+    }
+
+    private fun initObjects() {
+        getWeatherByNameUseCase= GetWeatherByNameUseCase(
+            weatherRepository = WeatherRepositoryImpl(
+                api= DIContainer.api,
+                mapper = WeatherMapper()
+            )
+        )
+        getCitiesListUseCase= GetCitiesListUseCase(
+            weatherRepository = WeatherRepositoryImpl(
+                api= DIContainer.api,
+                mapper = WeatherMapper()
+            )
+        )
     }
 
     private fun requestLocationAccess() {
