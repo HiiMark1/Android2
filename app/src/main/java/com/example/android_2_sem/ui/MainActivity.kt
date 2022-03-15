@@ -1,8 +1,9 @@
-package com.example.android_2_sem
+package com.example.android_2_sem.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.android_2_sem.fragments.FindCitiesFragment
+import com.example.android_2_sem.R
+import com.example.android_2_sem.ui.fragments.FindCitiesFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
