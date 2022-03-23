@@ -1,6 +1,12 @@
 package com.example.android_2_sem.di
 
+import com.example.android_2_sem.data.WeatherRepositoryImpl
 import com.example.android_2_sem.data.api.Api
+import com.example.android_2_sem.data.mappers.WeatherMapper
+import com.example.android_2_sem.domain.WeatherRepository
+import com.example.android_2_sem.domain.usecases.GetCitiesListUseCase
+import com.example.android_2_sem.domain.usecases.GetWeatherByIdUseCase
+import com.example.android_2_sem.domain.usecases.GetWeatherByNameUseCase
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -71,4 +77,21 @@ object DIContainer {
             .build()
             .create(Api::class.java)
     }
+
+    private val weatherRepository: WeatherRepository = WeatherRepositoryImpl(
+        api = api,
+        mapper = WeatherMapper()
+    )
+
+    val getWeatherByNameUseCase: GetWeatherByNameUseCase = GetWeatherByNameUseCase(
+        weatherRepository = weatherRepository
+    )
+
+    val getCitiesListUseCase: GetCitiesListUseCase = GetCitiesListUseCase(
+        weatherRepository = weatherRepository
+    )
+
+    val getWeatherByIdUseCase: GetWeatherByIdUseCase = GetWeatherByIdUseCase(
+        weatherRepository = weatherRepository
+    )
 }

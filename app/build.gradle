@@ -60,4 +60,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
     implementation 'io.coil-kt:coil:1.4.0'
+
+    //hw3
+    def lifecycle = "2.4.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
 }

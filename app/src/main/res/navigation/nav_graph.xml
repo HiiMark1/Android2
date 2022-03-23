@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/findCitiesFragment">
+
+    <fragment
+        android:id="@+id/findCitiesFragment"
+        android:name="com.example.android_2_sem.ui.fragments.FindCitiesFragment"
+        android:label="FindCitiesFragment" >
+        <action
+            android:id="@+id/action_findCitiesFragment_to_detailCityFragment"
+            app:destination="@id/detailCityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailCityFragment"
+        android:name="com.example.android_2_sem.ui.fragments.DetailCityFragment"
+        android:label="DetailCityFragment" />
+</navigation>
